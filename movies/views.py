@@ -23,5 +23,7 @@ def edit(request,pk):
     return render(request,'edit.html')
 
 def delete(request,pk):
+    instance=movie_data.objects.get(pk=pk)
+    instance.delete()
     movie_info=movie_data.objects.all()
     return render(request,'list.html',{'movies':movie_info})

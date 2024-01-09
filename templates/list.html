@@ -10,7 +10,7 @@
     <td><h1>Title : {{movie_obj.title|upper}}</h1></td>
     <td><h4>Year : {{movie_obj.year|default:'Unavailable'}}</h4></td>
     <td><h4>Summary : {{movie_obj.summary|default:'Unavailable'}}</h4></td>
-    <td><a href="">Edit</a> / <a href="">Delete</a></td>
+    <td><a href="{% url 'edit' movie_obj.id %}">Edit</a> / <a href="{% url 'delete' movie_obj.id %}">Delete</a></td>
 </tr>
 {%endfor%}
 </table>
