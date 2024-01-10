@@ -20,10 +20,20 @@ def list(request):
     return render(request,'list.html',{'movies':movie_info})
 
 def edit(request,pk):
-    return render(request,'edit.html')
+    edit_instance=movie_data.objects.get(pk=pk)
+    if request.POST:
+        frm=movie_form(request.POST,instance=edit_instance)
+        if frm.is_valid():
+            edit_instance.save()
+        else:
+            edit_instance=movie_form(instance=edit_instance)
+    frm=movie_form(instance=edit_instance)
+
+        
+    return render(request,'create.html',{'frm':frm})
 
 def delete(request,pk):
-    instance=movie_data.objects.get(pk=pk)
-    instance.delete()
+    del_instance=movie_data.objects.get(pk=pk)
+    del_instance.delete()
     movie_info=movie_data.objects.all()
     return render(request,'list.html',{'movies':movie_info})
