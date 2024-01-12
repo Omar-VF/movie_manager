@@ -3,11 +3,12 @@
 {%block content%}
 <h1>List</h1>
 <table>
-    <tr><th>Title</th><th>Year</th><th>Summary</th><th>Edit/Delete</th></tr>
+    <tr><th>Title</th><th>Poster</th><th>Year</th><th>Summary</th><th>Edit/Delete</th></tr>
 {%for movie_obj in movies%}
 
 <tr>
     <td><h1>Title : {{movie_obj.title|upper}}</h1></td>
+    <td> <img src="{{movie_obj.poster.url}}" alt=""  style="width: 220px; "></td>
     <td><h4>Year : {{movie_obj.year|default:'Unavailable'}}</h4></td>
     <td><h4>Summary : {{movie_obj.summary|default:'Unavailable'}}</h4></td>
     <td><a href="{% url 'edit' movie_obj.id %}">Edit</a> / <a href="{% url 'delete' movie_obj.id %}">Delete</a></td>
