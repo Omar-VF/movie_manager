@@ -25,8 +25,8 @@ def edit(request,pk):
         frm=movie_form(request.POST,request.FILES,instance=edit_instance)
         if frm.is_valid():
             edit_instance.save()
-    else:
-        edit_instance=movie_form(instance=edit_instance)
+        else:
+            edit_instance=movie_form(instance=edit_instance)
     frm=movie_form(instance=edit_instance)
 
         
