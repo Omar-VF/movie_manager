@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from . models import movie_data
 from . forms import movie_form
 # Create your views here.
@@ -9,6 +9,7 @@ def create(request):
         frm=movie_form(request.POST,request.FILES)
         if frm.is_valid:
             frm.save()
+            return redirect('list')
     else:
         frm=movie_form()
 
@@ -25,6 +26,7 @@ def edit(request,pk):
         frm=movie_form(request.POST,request.FILES,instance=edit_instance)
         if frm.is_valid():
             edit_instance.save()
+            return redirect('list')
         else:
             edit_instance=movie_form(instance=edit_instance)
     frm=movie_form(instance=edit_instance)
