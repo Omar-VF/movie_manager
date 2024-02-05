@@ -37,5 +37,4 @@ def edit(request,pk):
 def delete(request,pk):
     del_instance=movie_data.objects.get(pk=pk)
     del_instance.delete()
-    movie_info=movie_data.objects.all()
-    return render(request,'list.html',{'movies':movie_info})
+    return redirect('list')
