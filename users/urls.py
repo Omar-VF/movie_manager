@@ -18,10 +18,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('create/', views.create,name='create'),
-    path('home/<pk>', views.list,name='home'),
-    path('edit/<pk>', views.edit,name='edit'),
-    path('delete/<pk>', views.delete,name='delete'),
-    path('', views.list,name='home'),
-
+    path('signup/',views.signup,name='signup'),
 ]
