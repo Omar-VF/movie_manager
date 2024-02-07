@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 from .models import movie_data
 from .forms import movie_form
 
@@ -19,12 +20,12 @@ def create(request):
 
 
 def list(request):
-    print(request.COOKIES)
-    visits = int(request.COOKIES.get('visits',0))
-    visits = visits+1
+    count = request.session.get('count',0)
+    count = int(count)
+    count = count+1
+    request.session['count']=count
     movie_info = movie_data.objects.all()
-    response = render(request, "list.html", {"movies": movie_info,'visits':visits})
-    response.set_cookie('visits',visits)
+    response = render(request, "list.html", {"movies": movie_info,'visits':count})
     return response
 
 
@@ -37,12 +38,24 @@ def edit(request, pk):
             return redirect("list")
         else:
             edit_instance = movie_form(instance=edit_instance)
-    frm = movie_form(instance=edit_instance)
+    else:
+        frm = movie_form(instance=edit_instance)
 
     return render(request, "create.html", {"frm": frm})
 
 
+
+class ConfirmDeleteView(TemplateView):
+    template_name = 'confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = kwargs['pk']
+        return context
+
 def delete(request, pk):
     del_instance = movie_data.objects.get(pk=pk)
-    del_instance.delete()
-    return redirect("list")
+    if request.method == 'POST':
+        del_instance.delete()
+        return redirect('list')
+    return render(request, 'confirm_delete.html', {'pk': pk})
