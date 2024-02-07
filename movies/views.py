@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from .models import movie_data
-from .forms import movie_form
+from .forms import movie_form, MovieSearchForm
 
 # Create your views here.
 
@@ -20,11 +20,21 @@ def create(request):
 
 
 def list(request):
+    #session- view count
     count = request.session.get('count',0)
     count = int(count)
     count = count+1
     request.session['count']=count
+
+    #defining movie_info
     movie_info = movie_data.objects.all()
+
+    #search bar
+    search_form = MovieSearchForm(request.GET)
+    if search_form.is_valid():
+        query = search_form.cleaned_data['query']
+        movie_info = movie_info.filter(title__icontains=query)
+    
     response = render(request, "list.html", {"movies": movie_info,'visits':count})
     return response
 
