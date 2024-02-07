@@ -40,10 +40,10 @@ class movie_data(models.Model):
     )
 
     directed_by = models.ForeignKey(
-        director, null=True, on_delete=models.CASCADE, related_name="directed_by"
+        director, null=True, on_delete=models.CASCADE, related_name="directed_by", blank=True
     )
 
-    actor = models.ManyToManyField(actors, related_name="acted_movies")
+    actor = models.ManyToManyField(actors, related_name="acted_movies",blank=True)
 
     def __str__(self) -> str:
         return self.title

@@ -20,22 +20,30 @@ def create(request):
 
 
 def list(request):
-    #session- view count
-    count = request.session.get('count',0)
-    count = int(count)
-    count = count+1
-    request.session['count']=count
+    # recently edited movies
+    recent_edits = request.session.get("recent_edits", [])
+    recent_edits_set = movie_data.objects.filter(pk__in=recent_edits)
 
-    #defining movie_info
+    # session- view count
+    count = request.session.get("count", 0)
+    count = int(count)
+    count = count + 1
+    request.session["count"] = count
+
+    # defining movie_info
     movie_info = movie_data.objects.all()
 
-    #search bar
+    # search bar
     search_form = MovieSearchForm(request.GET)
     if search_form.is_valid():
-        query = search_form.cleaned_data['query']
+        query = search_form.cleaned_data["query"]
         movie_info = movie_info.filter(title__icontains=query)
-    
-    response = render(request, "list.html", {"movies": movie_info,'visits':count})
+
+    response = render(
+        request,
+        "list.html",
+        {"movies": movie_info, "visits": count, "recent_edits_set": recent_edits_set},
+    )
     return response
 
 
@@ -45,6 +53,13 @@ def edit(request, pk):
         frm = movie_form(request.POST, request.FILES, instance=edit_instance)
         if frm.is_valid():
             edit_instance.save()
+
+            # recent edits  (not consistent)
+            recent_edits = request.session.get("recent_edits", [])
+            recent_edits.insert(0, pk)
+            request.session["recent_edits"] = recent_edits
+            if len(recent_edits)>3:
+                recent_edits.pop()
             return redirect("list")
         else:
             edit_instance = movie_form(instance=edit_instance)
@@ -54,18 +69,20 @@ def edit(request, pk):
     return render(request, "create.html", {"frm": frm})
 
 
-
 class ConfirmDeleteView(TemplateView):
-    template_name = 'confirm_delete.html'
+    template_name = "confirm_delete.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['pk'] = kwargs['pk']
+        context["pk"] = kwargs["pk"]
         return context
+
 
 def delete(request, pk):
     del_instance = movie_data.objects.get(pk=pk)
-    if request.method == 'POST':
+    if request.method == "POST":
         del_instance.delete()
-        return redirect('list')
-    return render(request, 'confirm_delete.html', {'pk': pk})
+        return redirect("list")
+    return render(
+        request, "confirm_delete.html", {"pk": pk, "title": del_instance.title}
+    )

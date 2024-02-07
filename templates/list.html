@@ -3,12 +3,22 @@
 {%block content%}
 <hr>
 <h1>List</h1>
+<hr>
+
+<h2><u>Recent Edits</u></h2>
+
+{% for movie in recent_edits_set %}
+
+<p>>{{movie.title|upper}}</p>
+
+{% endfor %}
+
+<hr>
 
 <form method="get">
     <input type="text" name="query" placeholder="Search...">
     <button type="submit">Search</button>
 </form>
-
 <style>
     
     table {
