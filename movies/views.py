@@ -19,8 +19,13 @@ def create(request):
 
 
 def list(request):
+    print(request.COOKIES)
+    visits = int(request.COOKIES.get('visits',0))
+    visits = visits+1
     movie_info = movie_data.objects.all()
-    return render(request, "list.html", {"movies": movie_info})
+    response = render(request, "list.html", {"movies": movie_info,'visits':visits})
+    response.set_cookie('visits',visits)
+    return response
 
 
 def edit(request, pk):

@@ -3,14 +3,6 @@
 {%block content%}
 <hr>
 <h1>List</h1>
-<div class="wrap">
-    <div class="search">
-       <input type="text" class="searchTerm" placeholder="Search Movie Name...">
-       <button type="submit" class="searchButton">
-         Search
-      </button>
-    </div>
- </div>
 <style>
     
     table {
@@ -31,4 +23,5 @@
 </tr>
 {%endfor%}
 </table>
+<h4>Visited : {{visits}} times</h4>
 {%endblock content%}
