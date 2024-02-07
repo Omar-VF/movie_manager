@@ -12,7 +12,7 @@ def create(request):
         frm = movie_form(request.POST, request.FILES)
         if frm.is_valid:
             frm.save()
-            return redirect("list")
+            return redirect("home")
     else:
         frm = movie_form()
 
@@ -23,6 +23,9 @@ def list(request):
     # recently edited movies
     recent_edits = request.session.get("recent_edits", [])
     recent_edits_set = movie_data.objects.filter(pk__in=recent_edits)
+    if len(recent_edits)>3:
+        recent_edits.pop()
+    
 
     # session- view count
     count = request.session.get("count", 0)
@@ -58,9 +61,7 @@ def edit(request, pk):
             recent_edits = request.session.get("recent_edits", [])
             recent_edits.insert(0, pk)
             request.session["recent_edits"] = recent_edits
-            if len(recent_edits)>3:
-                recent_edits.pop()
-            return redirect("list")
+            return redirect("home")
         else:
             edit_instance = movie_form(instance=edit_instance)
     else:
@@ -82,7 +83,7 @@ def delete(request, pk):
     del_instance = movie_data.objects.get(pk=pk)
     if request.method == "POST":
         del_instance.delete()
-        return redirect("list")
+        return redirect("home")
     return render(
         request, "confirm_delete.html", {"pk": pk, "title": del_instance.title}
     )
