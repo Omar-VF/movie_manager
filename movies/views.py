@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from .models import movie_data
 from .forms import movie_form, MovieSearchForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 
+@login_required(login_url='login')
 def create(request):
     frm = movie_form()
     if request.POST:
@@ -23,15 +25,12 @@ def list(request):
     # recently edited movies
     recent_edits = request.session.get("recent_edits", [])
     recent_edits_set = movie_data.objects.filter(pk__in=recent_edits)
-    if len(recent_edits)>3:
+    if len(recent_edits) > 3:
         recent_edits.pop()
-    
 
     # session- view count
-    count = request.session.get("count", 0)
-    count = int(count)
-    count = count + 1
-    request.session["count"] = count
+    visits = int(request.COOKIES.get("visits", 0))
+    visits += 1
 
     # defining movie_info
     movie_info = movie_data.objects.all()
@@ -39,17 +38,22 @@ def list(request):
     # search bar
     search_form = MovieSearchForm(request.GET)
     if search_form.is_valid():
-        query = search_form.cleaned_data["query"]
-        movie_info = movie_info.filter(title__icontains=query)
+        search = search_form.cleaned_data["query"]
+        movie_info = movie_info.filter(title__icontains=search)
 
     response = render(
         request,
         "list.html",
-        {"movies": movie_info, "visits": count, "recent_edits_set": recent_edits_set},
+        {"movies": movie_info, "visits": visits, "recent_edits_set": recent_edits_set},
     )
+
+    # setting cookie
+    response.set_cookie("visits", visits)
+
     return response
 
 
+@login_required(login_url='login')
 def edit(request, pk):
     edit_instance = movie_data.objects.get(pk=pk)
     if request.POST:
@@ -79,6 +83,7 @@ class ConfirmDeleteView(TemplateView):
         return context
 
 
+@login_required(login_url='login')
 def delete(request, pk):
     del_instance = movie_data.objects.get(pk=pk)
     if request.method == "POST":

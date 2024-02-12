@@ -1,0 +1,30 @@
+{%extends 'blank_layout.html'%}
+
+{%block content%}
+<h1>Login</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>
+        <label>Username : </label><input type="text" name="username" required>
+    </p>
+    <p>
+        <label>Password : </label><input type="password" name="password" required>
+    </p>
+    <button type="submit">SignUp</button>
+</form>
+
+<p>
+    {% if user %}
+    Login Succesful!
+    {% endif %}
+</p>
+
+<p style="color: red;">
+    {% if error_message %}
+    <strong><u>{{error_message}}</u></strong>
+    {% endif %}
+</p>
+
+
+{%endblock content%}
